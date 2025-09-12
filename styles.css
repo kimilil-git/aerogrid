@@ -17,14 +17,6 @@
   font-family: 'Fahkwang', serif;
 }
 
-@font-face{
-  font-family: 'Fahkwang';
-  src: url('/aerogrid/font/Fahkwang-Bold.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* ========== CUSTOM CURSOR ========== */
 /* 데스크톱에서만 기본 커서를 숨기고 커스텀 커서를 보이게 */
 @media (hover: hover) and (pointer: fine) {
@@ -1186,6 +1178,7 @@ body {
 /* 카드 호버 시 화살표 애니메이션 */
 .business-card:hover .business-card-arrow img {
   transform: translate(-50%, -50%) translateX(200%); /* 호버 시: 오른쪽으로 멀리 이동 */
+  filter: brightness(0) invert(1); /* 호버 시에도 흰색 유지 */
 }
 
 /* 새로운 화살표 아이콘 (호버 시 나타남) */
@@ -1197,9 +1190,11 @@ body {
   transform: translate(-50%, -50%) translateX(-200%); /* 평상시: 왼쪽으로 멀리 */
   width: 32px;
   height: 32px;
-  background-image: url("./img/arrow-right.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
+  background-color: #FFFFFF; /* 호버 시 흰색 화살표 */
+  mask: url("./img/arrow-right.svg") no-repeat center;
+  mask-size: contain;
+  -webkit-mask: url("./img/arrow-right.svg") no-repeat center;
+  -webkit-mask-size: contain;
   transition: transform 0.3s ease-out;
   z-index: 1;
 }
@@ -1435,9 +1430,11 @@ body {
   transform: translate(-50%, -50%) translateX(-200%); /* 평상시: 왼쪽으로 멀리 */
   width: 20px;
   height: 20px;
-  background-image: url("./img/arrow-right.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
+  background-color: #FFFFFF; /* 호버 시 흰색 화살표 */
+  mask: url("./img/arrow-right.svg") no-repeat center;
+  mask-size: contain;
+  -webkit-mask: url("./img/arrow-right.svg") no-repeat center;
+  -webkit-mask-size: contain;
   transition: transform 0.3s ease-out;
   z-index: 1;
 }
@@ -1457,6 +1454,7 @@ body {
 
 .common-btn:hover .common-btn-arrow img {
   transform: translate(-50%, -50%) translateX(200%); /* 호버 시: 오른쪽으로 멀리 이동 */
+  filter: brightness(0) invert(1); /* 호버 시에도 흰색 유지 */
 }
 
 .common-btn:hover .common-btn-arrow::before {
@@ -1504,27 +1502,30 @@ body {
 .common-btn-2-arrow img {
   width: 20px;
   height: 20px;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease-out;
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); /* 평상시: 써클 중앙에 표시 */
   z-index: 2;
-  filter: none; /* 화살표를 #191919로 */
+  color: #191919; /* currentColor로 색상 제어 */
 }
 
+/* 새로운 화살표 아이콘 (호버 시 나타남) */
 .common-btn-2-arrow::before {
   content: '';
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) translateX(-200%);
+  transform: translate(-50%, -50%) translateX(-200%); /* 평상시: 왼쪽으로 멀리 */
   width: 20px;
   height: 20px;
-  background-image: url("./img/arrow-right.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  transition: transform 0.3s ease;
+  background-color: #FFFFFF; /* 호버 시 흰색 화살표 */
+  mask: url("./img/arrow-right.svg") no-repeat center;
+  mask-size: contain;
+  -webkit-mask: url("./img/arrow-right.svg") no-repeat center;
+  -webkit-mask-size: contain;
+  transition: transform 0.3s ease-out;
   z-index: 1;
 }
 
@@ -1543,11 +1544,12 @@ body {
 }
 
 .common-btn-2:hover .common-btn-2-arrow img {
-  transform: translate(-50%, -50%) translateX(200%);
+  transform: translate(-50%, -50%) translateX(200%); /* 호버 시: 오른쪽으로 멀리 이동 */
+  color: #FFFFFF !important; /* 호버 시 흰색 (사라지기 전까지) - 강제 적용 */
 }
 
 .common-btn-2:hover .common-btn-2-arrow::before {
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); /* 호버 시: 정중앙으로 이동 */
 }
 
 /* 푸터 로고 스타일 */
@@ -1966,22 +1968,41 @@ body {
 /* 커리어 아이템 */
 .career-item {
   background: #f8f9fa;
-  border-radius: 12px;
+  border-radius: var(--border-radius-card);
   padding: 48px 60px;
   box-shadow: none;
-  transition: transform 0.3s ease-out;
+  transition: var(--transition-smooth), var(--transition-color), box-shadow 0.3s ease-out;
   cursor: pointer;
+  position: relative;
+  border: 1px solid transparent; /* 기본 투명 보더 */
+}
+
+/* 채용카드 단순 호버 효과 */
+
+/* 공통 transition 변수 */
+:root {
+  --transition-smooth: transform 0.3s ease-out;
+  --transition-color: background-color 0.3s ease-out;
+  --transition-all: all 0.3s ease-out;
+  --border-radius-card: 16px;
+  --color-primary: #0201AD;
+  --color-white: #FFFFFF;
+  --shadow-card: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
 .career-item:hover {
   transform: none;
+  background: var(--color-white); /* 호버 시 흰색 배경 */
+  border: 1px solid var(--color-primary); /* 호버 시 1px #0201AD 스트로크 */
+  box-shadow: var(--shadow-card); /* 호버 시 그림자 추가 */
 }
+
 
 .career-status {
   background: transparent;
-  color: #0201AD;
+  color: var(--color-primary);
   padding: 6px 16px;
-  border: 1px solid #0201AD;
+  border: 1px solid var(--color-primary);
   border-radius: 4px;
   font-size: 16px;
   font-weight: 600;

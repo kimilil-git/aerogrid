@@ -1063,3 +1063,6 @@ window.addEventListener('load', function() {
     document.body.style.cursor = 'url("./img/cursor.svg"), auto';
   });
 })();
+
+// Career Card Border Animation - CodePen 스타일2 방식 (CSS-only)
+// JavaScript 불필요 - CSS :hover 선택자로 모든 애니메이션 처리
