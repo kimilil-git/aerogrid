@@ -464,6 +464,101 @@ window.addEventListener('load', function() {
   const section   = document.querySelector('.vision-section');
   if (!section) return;
 
+  // 화면 크기에 따라 translateY 값을 동적으로 계산하는 함수
+  function updateTextLineTransform() {
+    const lines = document.querySelectorAll('.text-line');
+    const screenWidth = window.innerWidth;
+    
+    lines.forEach(line => {
+      let translateY = '100%'; // 기본값
+      
+      if (screenWidth <= 400) {
+        // 400px 이하에서 세 줄로 떨어지는 경우를 고려한 계산
+        const textContent = line.textContent;
+        
+        if (textContent === 'WHAT WE') {
+          translateY = '120%';
+        } else if (textContent === 'WANT TO') {
+          // 'WANT TO' 부분
+          translateY = '120%';
+        } else if (textContent === 'DO') {
+          // 'DO' 부분 - 세 번째 줄로 떨어질 때를 고려
+          translateY = '120%';
+        }
+      } else if (screenWidth <= 768) {
+        // 768px 이하에서 일반적인 모바일 처리 (401px 이상에서는 두 줄로 처리)
+        const textContent = line.textContent;
+        
+        if (textContent === 'WHAT WE') {
+          translateY = '130%';
+        } else if (textContent === 'WANT TO') {
+          translateY = '150%';
+        } else if (textContent === 'DO') {
+          translateY = '150%';
+        } else if (textContent === 'WANT TO DO') {
+          // 768px ~ 401px 해상도에서 'WANT TO DO' 마스크 위치 조정
+          translateY = '150%';
+        }
+      } else if (screenWidth <= 1200) {
+        translateY = '180%'; // 태블릿에서 중간 이동
+      } else if (screenWidth <= 1400) {
+        translateY = '140%'; // 작은 데스크톱에서 약간 이동
+      }
+      
+      // transition이 적용되지 않은 상태에서만 transform 설정
+      if (!line.style.transition) {
+        line.style.transform = `translateY(${translateY})`;
+      }
+    });
+  }
+
+  // 화면 크기에 따라 HTML 구조를 동적으로 변경하는 함수
+  function updateTextStructure() {
+    const screenWidth = window.innerWidth;
+    const visionTitle = document.querySelector('.vision-title');
+    
+    if (!visionTitle) return;
+    
+    if (screenWidth <= 400) {
+      // 400px 이하: 세 줄로 분리
+      const currentStructure = visionTitle.innerHTML;
+      if (!currentStructure.includes('data-text="WANT TO"')) {
+        visionTitle.innerHTML = `
+          <div class="headline-line">
+            <span class="text-line" data-text="WHAT WE">WHAT WE</span>
+          </div>
+          <div class="headline-line">
+            <span class="text-line" data-text="WANT TO">WANT TO</span>
+          </div>
+          <div class="headline-line">
+            <span class="text-line" data-text="DO">DO</span>
+          </div>
+        `;
+      }
+    } else {
+      // 401px 이상: 두 줄로 합치기
+      const currentStructure = visionTitle.innerHTML;
+      if (currentStructure.includes('data-text="WANT TO"')) {
+        visionTitle.innerHTML = `
+          <div class="headline-line">
+            <span class="text-line" data-text="WHAT WE">WHAT WE</span>
+          </div>
+          <div class="headline-line">
+            <span class="text-line" data-text="WANT TO DO">WANT TO DO</span>
+          </div>
+        `;
+      }
+    }
+  }
+
+  // 초기 설정 및 리사이즈 이벤트 리스너
+  updateTextStructure();
+  updateTextLineTransform();
+  window.addEventListener('resize', () => {
+    updateTextStructure();
+    updateTextLineTransform();
+  });
+
                const stage     = section.querySelector('.vision-container');
   const header    = section.querySelector('.vision-text');
          const headlineLines = section.querySelectorAll('.headline-line');
@@ -553,8 +648,44 @@ window.addEventListener('load', function() {
            headlineLines.forEach((line) => {
              const textLine = line.querySelector('.text-line');
              if (textLine) {
-               // 등장과 같은 0.4초 transition으로 사라짐
-               textLine.style.transform = `translateY(100%)`;
+               // 화면 크기에 따른 동적 translateY 값으로 사라짐
+               const screenWidth = window.innerWidth;
+               let translateY = '100%';
+               
+               if (screenWidth <= 400) {
+                 // 400px 이하에서 세 줄로 떨어지는 경우를 고려한 계산
+                 const textContent = textLine.textContent;
+                 
+                 if (textContent === 'WHAT WE') {
+                   translateY = '120%';
+                 } else if (textContent === 'WANT TO') {
+                   // 'WANT TO' 부분
+                   translateY = '120%';
+                 } else if (textContent === 'DO') {
+                   // 'DO' 부분 - 세 번째 줄로 떨어질 때를 고려
+                   translateY = '120%';
+                 }
+               } else if (screenWidth <= 768) {
+                 // 768px 이하에서 일반적인 모바일 처리 (401px 이상에서는 두 줄로 처리)
+                 const textContent = textLine.textContent;
+                 
+                 if (textContent === 'WHAT WE') {
+                   translateY = '130%';
+                 } else if (textContent === 'WANT TO') {
+                   translateY = '150%';
+                 } else if (textContent === 'DO') {
+                   translateY = '150%';
+                 } else if (textContent === 'WANT TO DO') {
+                   // 768px ~ 401px 해상도에서 'WANT TO DO' 마스크 위치 조정
+                   translateY = '150%';
+                 }
+               } else if (screenWidth <= 1200) {
+                 translateY = '180%';
+               } else if (screenWidth <= 1400) {
+                 translateY = '140%';
+               }
+               
+               textLine.style.transform = `translateY(${translateY})`;
              }
            });
          }
@@ -565,24 +696,59 @@ window.addEventListener('load', function() {
              /* 2) 텍스트 채우기 (8% ~ 30% = 80vh ~ 300vh) */
          if (p >= fillStart && p <= fillEnd) {
            const tFill = (p - fillStart) / (fillEnd - fillStart); // 0~1
+           const screenWidth = window.innerWidth;
            
            // "WHAT WE" 줄: 8% ~ 19%에서 채워짐 (0% ~ 50% 구간)
            // "WANT TO DO" 줄: 19% ~ 30%에서 채워짐 (50% ~ 100% 구간)
            lines.forEach((el, index) => {
-             const lineStart = index * 0.5; // 각 줄의 시작 비율 (0, 0.5)
-             const lineEnd = (index + 1) * 0.5; // 각 줄의 끝 비율 (0.5, 1.0)
+             const textContent = el.textContent;
+             
+             // 400px 이하에서 'DO'를 별도 처리
+             if (screenWidth <= 400 && textContent === 'DO') {
+               // 'DO'는 세 번째 줄로 처리 (인덱스 2)
+               const lineStart = 2 * 0.33; // 0.66
+               const lineEnd = 3 * 0.33; // 0.99
+               
+               if (tFill <= lineStart) {
+                 el.style.setProperty('--p', '0%');
+               } else if (tFill >= lineEnd) {
+                 el.style.setProperty('--p', '100%');
+               } else {
+                 const lineProgress = (tFill - lineStart) / 0.33;
+                 const percentage = Math.max(0, Math.min(100, lineProgress * 100));
+                 el.style.setProperty('--p', `${percentage}%`);
+               }
+             } else if (screenWidth <= 400 && textContent === 'WANT TO') {
+               // 400px 이하에서 'WANT TO'는 두 번째 줄로 처리 (인덱스 1)
+               const lineStart = 1 * 0.33; // 0.33
+               const lineEnd = 2 * 0.33; // 0.66
+               
+               if (tFill <= lineStart) {
+                 el.style.setProperty('--p', '0%');
+               } else if (tFill >= lineEnd) {
+                 el.style.setProperty('--p', '100%');
+               } else {
+                 const lineProgress = (tFill - lineStart) / 0.33;
+                 const percentage = Math.max(0, Math.min(100, lineProgress * 100));
+                 el.style.setProperty('--p', `${percentage}%`);
+               }
+             } else {
+               // 일반적인 처리 (두 줄 또는 400px 초과)
+               const lineStart = index * 0.5; // 각 줄의 시작 비율 (0, 0.5)
+               const lineEnd = (index + 1) * 0.5; // 각 줄의 끝 비율 (0.5, 1.0)
 
-             if (tFill <= lineStart) {
-               // 아직 이 줄이 시작되지 않음
-               el.style.setProperty('--p', '0%');
-             } else if (tFill >= lineEnd) {
-               // 이 줄이 완전히 채워짐
-               el.style.setProperty('--p', '100%');
-  } else {
-               // 이 줄이 진행 중 - 스크롤과 정확히 1:1 매칭
-               const lineProgress = (tFill - lineStart) / 0.5;
-               const percentage = Math.max(0, Math.min(100, lineProgress * 100));
-               el.style.setProperty('--p', `${percentage}%`);
+               if (tFill <= lineStart) {
+                 // 아직 이 줄이 시작되지 않음
+                 el.style.setProperty('--p', '0%');
+               } else if (tFill >= lineEnd) {
+                 // 이 줄이 완전히 채워짐
+                 el.style.setProperty('--p', '100%');
+               } else {
+                 // 이 줄이 진행 중 - 스크롤과 정확히 1:1 매칭
+                 const lineProgress = (tFill - lineStart) / 0.5;
+                 const percentage = Math.max(0, Math.min(100, lineProgress * 100));
+                 el.style.setProperty('--p', `${percentage}%`);
+               }
              }
            });
          } else if (p < fillStart) {
@@ -608,9 +774,20 @@ window.addEventListener('load', function() {
                  const viewportWidth = window.innerWidth;
                  const viewportHeight = window.innerHeight;
                  
-                 // 카드 크기를 뷰포트 기준으로 계산
-                 const cardWidthPercent = (480 / viewportWidth) * 100;
-                 const cardHeightPercent = (640 / viewportHeight) * 100;
+                 // 카드 크기를 뷰포트 기준으로 계산 (반응형 고려)
+                 let cardWidth, cardHeight;
+                 if (viewportWidth <= 900) {
+                   // 900px 이하에서는 작은 카드 크기 사용
+                   cardWidth = 320;
+                   cardHeight = 426;
+                 } else {
+                   // 900px 초과에서는 기본 카드 크기 사용
+                   cardWidth = 480;
+                   cardHeight = 640;
+                 }
+                 
+                 const cardWidthPercent = (cardWidth / viewportWidth) * 100;
+                 const cardHeightPercent = (cardHeight / viewportHeight) * 100;
                  
                  earthBackground.style.setProperty('--earth-mask-width', `${cardWidthPercent}%`);
                  earthBackground.style.setProperty('--earth-mask-height', `${cardHeightPercent}%`);
@@ -620,13 +797,25 @@ window.addEventListener('load', function() {
                else if (p >= earthMaskExpand) {
                  const tExpand = Math.max(0, Math.min(1, (p - earthMaskExpand) / (zoomEnd - earthMaskExpand)));
                
-               // 58% 시점의 지구 마스크 크기 (576 * 768)로 마스크 시작
+               // 58% 시점의 지구 마스크 크기로 마스크 시작 (반응형 고려)
                const viewportWidth = window.innerWidth;
                const viewportHeight = window.innerHeight;
                
-               // 58% 시점의 실제 마스크 크기
-               const cardWidth = 576;
-               const cardHeight = 768;
+               // 58% 시점의 실제 마스크 크기 (반응형 + 1.2배 확대 적용)
+               let baseCardWidth, baseCardHeight;
+               if (viewportWidth <= 900) {
+                 // 900px 이하에서는 작은 카드 크기 사용
+                 baseCardWidth = 320;
+                 baseCardHeight = 426;
+               } else {
+                 // 900px 초과에서는 기본 카드 크기 사용
+                 baseCardWidth = 480;
+                 baseCardHeight = 640;
+               }
+               
+               // 58% 시점에서 카드가 1.2배 확대된 상태의 크기
+               const cardWidth = baseCardWidth * 1.2;
+               const cardHeight = baseCardHeight * 1.2;
                
                const cardWidthPercent = (cardWidth / viewportWidth) * 100;
                const cardHeightPercent = (cardHeight / viewportHeight) * 100;
